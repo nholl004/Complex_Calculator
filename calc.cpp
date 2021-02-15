@@ -2,6 +2,9 @@
 #include <math.h>
 
 void add(double n1_1,double n1_2, double n2_1, double n2_2, double array[]);
+void sub(double n1_1,double n1_2, double n2_1, double n2_2, double array[]);
+void mult(double n1_1,double n1_2, double n2_1, double n2_2, double array[]);
+void div(double n1_1,double n1_2, double n2_1, double n2_2, double array[]);
 void phase(double n1, double n2, double array[]);
 void imaginary(double n1, double n2, double array[]);
 double degree(double n1);
@@ -12,8 +15,6 @@ int main (int argc, char *argv[]){
     char *p;
     double num1_1 = std::strtod(argv[2], &p);
     double num1_2 = std::strtod(argv[3], &p); 
-    //double num2_1 = std::strtod(argv[4], &p);
-    //double num2_2 = std::strtod(argv[5], &p);
 
     std::cout<< select << " " << num1_1 << " " << num1_2 << " " <<  std::endl;
 
@@ -43,6 +44,27 @@ int main (int argc, char *argv[]){
 
             std::cout << x << "+ j" << y << std::endl;
         }
+        else if(select == "s"){
+            sub(num1_1, num1_2, num2_1, num2_2, array);
+            double x = array[0];
+            double y = array[1];
+
+            std::cout << x << "+ j" << y << std::endl;
+        }
+        else if(select == "m"){
+            mult(num1_1, num1_2, num2_1, num2_2, array);
+            double mag = array[0];
+            double phase = array[1];
+
+            std::cout << mag << " <" << phase << std::endl;
+        }
+        else if(select == "d"){
+            div(num1_1, num1_2, num2_1, num2_2, array);
+            double mag = array[0];
+            double phase = array[1];
+
+            std::cout << mag << " <" << phase << std::endl;
+        }
     }
     return 0;
 }
@@ -57,11 +79,45 @@ void add(double n1_1,double n1_2, double n2_1, double n2_2, double array[]){
     array[0] = x;
     array[1] = y;
 }
+void sub(double n1_1,double n1_2, double n2_1, double n2_2, double array[]){
+    imaginary(n1_1, n1_2, array);
+    double x = array[0];
+    double y = array[1];
+    imaginary(n2_1, n2_2, array);
+    x = x - array[0];
+    y = y - array[1];
+
+    array[0] = x;
+    array[1] = y;
+}
+void mult(double n1_1,double n1_2, double n2_1, double n2_2, double array[]){
+    phase(n1_1, n1_2, array);
+    double m = array[0];
+    double p = array[1];
+    phase(n2_1, n2_2, array);
+    m = m * array[0];
+    p = p + array[1];
+
+    array[0] = m;
+    array[1] = p;
+}
+void div(double n1_1,double n1_2, double n2_1, double n2_2, double array[]){
+    phase(n1_1, n1_2, array);
+    double m = array[0];
+    double p = array[1];
+    phase(n2_1, n2_2, array);
+    m = m / array[0];
+    p = p - array[1];
+
+    array[0] = m;
+    array[1] = p;
+}
 
 void phase(double n1, double n2, double array[]){
     double mag = sqrt((pow(n1,2))+(pow(n2,2)));
     double phase = degree(atan(n2/n1));
-    if(n1 < 0)phase+=180;
+    if(n1 < 0 && n2 > 0)phase+=180;
+    else if(n1 < 0 && n2 < 0)phase-=180;
     array[0] = mag;
     array[1] = phase;
 }
